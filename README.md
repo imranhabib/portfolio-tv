@@ -84,5 +84,9 @@ can be merged. Run `npm test` and `npm run build` before you open it.
 
 ## Deploy
 
-This is a static site. On Vercel, import the repo and use the Vite preset:
-build command `npm run build`, output directory `dist`.
+This is a static site. On Vercel, import the repo; `vercel.json` sets everything else:
+
+- The build command is `npm test && npm run build`, so a failing check stops the deploy.
+- The output directory is `dist`.
+- The hashed JS and CSS files in `/assets/` are cached for a year. Their names change
+  when their content changes. Other files, such as images, keep Vercel's default caching.
