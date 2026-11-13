@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#050506" />
+    <title>DVD Video</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&amp;family=Outfit:wght@600&amp;display=swap" rel="stylesheet" />
+  </head>
+  <body class="is-starting">
+    <div class="tv-cabinet">
+    <div class="tv-viewport">
+    <div class="tv-startup" role="status" aria-label="Turning on the TV">
+      <div class="tv-picture" aria-hidden="true">
+        <div class="tv-bars"></div>
+        <div class="tv-static"></div>
+      </div>
+      <div class="tv-loading" aria-hidden="true"></div>
+    </div>
+    <main class="screen" data-channel="1" aria-label="TV screen">
+      <output id="channel-display" aria-live="polite" hidden>CH 01</output>
+      <div class="crt-tracking" aria-hidden="true"></div>
+      <div class="dvd-logo" aria-hidden="true">
+        <svg viewBox="0 0 220 90" role="presentation">
+          <g class="dvd-mark">
+            <text x="110" y="43" text-anchor="middle">DVD</text>
+            <path d="M48 49 Q110 63 172 49 Q160 76 110 80 Q60 76 48 49Z" />
+            <text class="video-mark" x="110" y="70" text-anchor="middle">VIDEO</text>
+          </g>
+        </svg>
+      </div>
+      <div id="bio">
+        <div class="bio-line"><span class="bio-word">imran</span> <span class="bio-word">habib</span> <span class="bio-word">currently</span> <span class="bio-word">a</span> <span class="bio-word">senior</span> <span class="bio-word">software</span> <span class="bio-word">engineer</span> <span class="bio-word">@</span> <span class="bio-word">atlassian</span></div>
+        <div class="bio-line"><span class="bio-word">previously,</span> <span class="bio-word">he</span> <span class="bio-word">led</span> <span class="bio-word">engineering</span> <span class="bio-word">teams</span> <span class="bio-word">at</span> <span class="bio-word">the</span> <span class="bio-word">royal</span> <span class="bio-word">bank</span> <span class="bio-word">of</span> <span class="bio-word">canada</span></div>
+        <div class="bio-line"><span class="bio-word">is</span> <span class="bio-word">a</span> <span class="bio-word">30</span> <span class="bio-word">under</span> <span class="bio-word">30</span> <span class="bio-word">alumni</span> <span class="bio-word">&amp;</span> <span class="bio-word">more</span></div>
+      </div>
+      <div class="linkedin-logo is-template" aria-hidden="true">
+        <svg viewBox="0 0 48 48" role="presentation">
+          <rect width="48" height="48" rx="8" />
+          <text x="24" y="35" text-anchor="middle">in</text>
+        </svg>
+      </div>
+      <section id="matrix-channel" hidden aria-label="Matrix terminal">
+        <p id="matrix-text"></p>
+      </section>
+      <section id="profile-channel" hidden aria-label="LinkedIn profile broadcast">
+        <div class="profile-scroll" tabindex="0" aria-label="Scroll Imran Habib’s LinkedIn profile">
+          <img src="/assets/linkedin-profile.png" alt="Captured LinkedIn profile of Imran Habib, including his introduction, experience, and education." draggable="false" />
+        </div>
+        <a class="profile-source" href="https://www.linkedin.com/in/imranhabibb/" target="_blank" rel="noopener noreferrer">Open LinkedIn ↗</a>
+      </section>
+      <section id="weather-channel" hidden aria-label="Local weather broadcast">
+        <div class="weather-broadcast">
+          <header class="weather-header">
+            <div class="weather-badge">LOCAL<br />WEATHER</div>
+            <div class="weather-heading"><span class="weather-city">Local Weather</span><h2>Extended Forecast</h2></div>
+            <time class="weather-clock"></time>
+          </header>
+          <div class="weather-grid"></div>
+          <footer class="weather-footer">
+            <div class="weather-pressure">BAROMETRIC PRESSURE: — IN.</div>
+            <div class="weather-credits"><span class="weather-status">TUNING LOCAL FORECAST…</span><a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">OPEN-METEO · °F</a></div>
+          </footer>
+        </div>
+      </section>
+      <section id="webcam-channel" hidden aria-label="Banzai Pipeline, Hawaii live webcam">
+        <iframe data-src="https://portofcams.com/embed/banzai-pipeline/" title="Banzai Pipeline, Hawaii live webcam" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>
+        <p class="webcam-credit"><a href="https://portofcams.com/cameras/banzai-pipeline/" target="_blank" rel="noopener noreferrer">Banzai Pipeline live camera</a> via <a href="https://portofcams.com/" target="_blank" rel="noopener noreferrer">Port of Cams</a></p>
+      </section>
+      <section id="snake-channel" hidden aria-label="Snake game">
+        <header class="snake-hud"><span>SNAKE</span><span>SCORE <strong class="snake-score">000</strong></span><span>BEST <strong class="snake-best">000</strong></span></header>
+        <div class="snake-playfield">
+          <canvas width="480" height="480" aria-label="Snake playing field"></canvas>
+          <div class="snake-overlay"><div><h2 class="snake-message">SNAKE</h2><p>EAT. GROW. STAY ALIVE.</p><button class="snake-start" type="button">START GAME</button></div></div>
+        </div>
+        <p class="snake-instructions">ARROWS / WASD · SWIPE TO TURN<br />SPACE TO PAUSE · ENTER TO PLAY</p>
+      </section>
+    </main>
+    </div>
+    <div class="tv-controls">
+      <div class="tv-speaker" aria-hidden="true"></div>
+      <span class="tv-power-light" aria-hidden="true"></span>
+      <span class="tv-brand" role="img" aria-label="RCA">
+        <svg viewBox="0 0 147.628 44.383" aria-hidden="true">
+          <path fill="currentColor" d="M95.972 42.833h19.621l7.242-17.146V8.851h4.891v33.982h18.197V2.166h-32.928zM1.927 42.833h18.445V8.789h4.952v17.703l7.18 16.341h19.25l-9.16-17.765c2.724-2.538 3.59-4.581 3.59-8.914 0-11.327-3.404-13.989-13.494-13.989H1.927v40.668zM72.35 8.344h5.138v11.575h19.188c.063-1.114 0-2.104 0-2.6 0-13.556-4.085-15.97-21.416-15.97-19.25 0-22.098 3.59-22.098 18.012 0 21.603.929 24.45 22.098 24.45 18.879 0 21.169-3.342 21.416-18.755H77.488v11.946H72.35V8.344z" />
+        </svg>
+      </span>
+      <div class="tv-channel-controls" role="group" aria-label="TV channel controls">
+        <button id="channel-down" type="button" aria-label="Previous channel">CH −</button>
+        <button id="channel-up" type="button" aria-label="Next channel">CH +</button>
+      </div>
+      <div class="tv-ports" aria-hidden="true">
+        <span class="tv-port-label">AV IN</span>
+        <span class="tv-port"></span>
+        <span class="tv-port"></span>
+      </div>
+    </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
