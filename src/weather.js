@@ -15,12 +15,13 @@ export function weatherCondition(code) {
 }
 
 function weatherIcon(type) {
-  const sun = '<g fill="#ffe260" stroke="#705212" stroke-width="2"><circle cx="64" cy="31" r="19"/><path d="M64 4v7m0 40v7M37 31h7m40 0h7M45 12l5 5m28 28 5 5m0-38-5 5M50 45l-5 5" stroke="#ffe260" stroke-width="4"/></g>';
-  const cloud = '<path d="M22 68C7 68 6 47 22 43c-2-20 26-29 37-12 17-8 34 5 29 22 17 6 12 23-4 23H25Z" fill="#b6b9b1" stroke="#26264c" stroke-width="3"/>';
-  const rain = '<path d="m28 79-8 13m30-13-8 13m30-13-8 13" stroke="#8ed8ff" stroke-width="5"/>';
-  const bolt = '<path d="M54 57 37 83h14l-8 20 30-33H59l10-13Z" fill="#ffe964" stroke="#5e591b" stroke-width="2"/>';
-  const snow = '<g fill="#fff"><circle cx="25" cy="87" r="3"/><circle cx="49" cy="92" r="3"/><circle cx="73" cy="85" r="3"/></g>';
-  const fog = '<path d="M12 82h77M20 91h65" stroke="#c7cbcd" stroke-width="4"/>';
+  // The wx-* classes animate each part (see style.css): rays turn, clouds drift, rain and snow fall.
+  const sun = '<g fill="#ffe260" stroke="#705212" stroke-width="2"><circle cx="64" cy="31" r="19"/><path class="wx-rays" d="M64 4v7m0 40v7M37 31h7m40 0h7M45 12l5 5m28 28 5 5m0-38-5 5M50 45l-5 5" stroke="#ffe260" stroke-width="4"/></g>';
+  const cloud = '<path class="wx-cloud" d="M22 68C7 68 6 47 22 43c-2-20 26-29 37-12 17-8 34 5 29 22 17 6 12 23-4 23H25Z" fill="#b6b9b1" stroke="#26264c" stroke-width="3"/>';
+  const rain = '<g class="wx-rain" stroke="#8ed8ff" stroke-width="5"><path d="m28 79-8 13"/><path d="m50 79-8 13"/><path d="m72 79-8 13"/></g>';
+  const bolt = '<path class="wx-bolt" d="M54 57 37 83h14l-8 20 30-33H59l10-13Z" fill="#ffe964" stroke="#5e591b" stroke-width="2"/>';
+  const snow = '<g class="wx-snow" fill="#fff"><circle cx="25" cy="87" r="3"/><circle cx="49" cy="92" r="3"/><circle cx="73" cy="85" r="3"/></g>';
+  const fog = '<g class="wx-fog" stroke="#c7cbcd" stroke-width="4"><path d="M12 82h77"/><path d="M20 91h65"/></g>';
   return `<svg viewBox="0 0 110 110" aria-hidden="true">${type === 'sun' || type === 'partly' ? sun : ''}${type !== 'sun' ? cloud : ''}${type === 'rain' || type === 'storm' ? rain : ''}${type === 'storm' ? bolt : ''}${type === 'snow' ? snow : ''}${type === 'fog' ? fog : ''}</svg>`;
 }
 
