@@ -54,10 +54,10 @@ npm run preview   # serve the built site
 
 ## Checks
 
-Each check script is a standalone Node script:
+Each check script is a standalone Node script. Run them all with:
 
 ```bash
-for f in scripts/*.mjs; do node "$f"; done
+npm test
 ```
 
 ## Deploy
