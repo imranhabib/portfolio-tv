@@ -7,7 +7,6 @@ const restAtEnd = 5;
 
 export function createExperienceChannel(element) {
   const scroll = element.querySelector('.profile-scroll');
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   let startedAt;
   let manualUntil = 0;
   let pointerHeld = false;
@@ -49,7 +48,7 @@ export function createExperienceChannel(element) {
     },
     leave() {},
     update(time) {
-      if (reducedMotion.matches || pointerHeld || touchHeld || time < manualUntil) return;
+      if (pointerHeld || touchHeld || time < manualUntil) return;
       const distance = scroll.scrollHeight - scroll.clientHeight;
       if (distance <= 0) return;
       manualUntil = 0;

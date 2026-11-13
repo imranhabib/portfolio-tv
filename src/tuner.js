@@ -14,6 +14,7 @@ export function createTuner(screen, display, channels) {
   let requested = 0;
   let switching = false;
   let on = false;
+  let off = false;
   let switchTimer;
   let displayTimer;
 
@@ -24,14 +25,44 @@ export function createTuner(screen, display, channels) {
     displayTimer = setTimeout(() => { display.hidden = true; }, displayTime);
   }
 
+  function show(index) {
+    screen.dataset.channel = String(index + 1);
+    channels.forEach((channel, i) => {
+      if (channel.element) channel.element.hidden = i !== index;
+    });
+  }
+
   return {
-    // Ends the start-up screen: show the overlay and start sending frames.
+    // Show the overlay and start sending frames. After turnOff(), the last channel comes back first.
     turnOn() {
+      if (off) {
+        off = false;
+        show(current);
+        channels[current].enter();
+      }
       on = true;
       showDisplay();
     },
+    // Blank the screen: the channel leaves, nothing is shown, and channel changes are ignored.
+    turnOff() {
+      clearTimeout(switchTimer);
+      if (switching) current = requested;
+      else channels[current].leave();
+      switching = false;
+      requested = current;
+      on = false;
+      off = true;
+      clearTimeout(displayTimer);
+      display.hidden = true;
+      screen.classList.remove('channel-changing');
+      screen.dataset.channel = 'off';
+      channels.forEach((channel) => {
+        if (channel.element) channel.element.hidden = true;
+      });
+    },
     // Move `step` channels up (+) or down (-), wrapping around. Rapid presses add up.
     change(step) {
+      if (off) return;
       requested = (((requested + step) % channels.length) + channels.length) % channels.length;
       if (!switching) {
         switching = true;
@@ -42,11 +73,8 @@ export function createTuner(screen, display, channels) {
       switchTimer = setTimeout(() => {
         current = requested;
         switching = false;
-        screen.dataset.channel = String(current + 1);
+        show(current);
         showDisplay();
-        channels.forEach((channel, index) => {
-          if (channel.element) channel.element.hidden = index !== current;
-        });
         channels[current].enter();
         screen.classList.remove('channel-changing');
       }, switchDelay);
