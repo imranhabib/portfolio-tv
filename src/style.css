@@ -413,7 +413,8 @@ body {
 .weather-credits { display: flex; justify-content: space-between; gap: 8px; margin-top: 5px; font: clamp(6px, 1.15cqw, 12px) "Courier New", monospace; }
 .weather-credits a { color: inherit; }
 
-#webcam-channel {
+#webcam-channel,
+#iss-channel {
   position: absolute;
   inset: 0;
   z-index: 3;
@@ -422,9 +423,12 @@ body {
 }
 
 /* View-only: hovers and clicks never reach the YouTube player, so its "More videos" and links stay hidden. */
-#webcam-channel iframe { display: block; width: 100%; height: calc(100% - 28px); border: 0; pointer-events: none; }
+:is(#webcam-channel, #iss-channel) iframe { display: block; width: 100%; height: calc(100% - 28px); border: 0; pointer-events: none; }
 .webcam-credit { position: absolute; bottom: 0; left: 0; right: 0; margin: 0; padding: 7px 10px; color: #a4b49a; background: #080b09; text-align: center; font: 10px ui-monospace, monospace; }
 .webcam-credit a { color: inherit; }
+/* Matches the LIVE badge that the Port of Cams player shows on the waves channel. */
+.webcam-live { position: absolute; top: 15px; left: 20px; display: flex; align-items: center; gap: 6px; color: #d9d9d9; font: 500 11px/1 system-ui, sans-serif; letter-spacing: .12em; }
+.webcam-live::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #e0352b; box-shadow: 0 0 6px #e0352b; }
 
 #snake-channel { position: absolute; inset: 0; z-index: 3; padding: clamp(18px, 4%, 32px); background: #010803; color: #87fb8e; font: 12px/1.5 "Courier New", monospace; }
 #snake-channel:not([hidden]) { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 16px; }
