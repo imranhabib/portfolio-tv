@@ -1,12 +1,16 @@
 {
-  "name": "dvd-video-screensaver",
+  "name": "portfolio-tv",
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "for f in scripts/*.mjs; do node \"$f\" || exit 1; done"
   },
   "devDependencies": {
     "vite": "^7.1.7"

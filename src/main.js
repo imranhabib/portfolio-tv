@@ -7,6 +7,9 @@ import { createWeatherBroadcast } from './weather.js';
 import { createMatrixChannel } from './matrix.js';
 import { createSnakeChannel } from './snake.js';
 
+// Matches the 1600 ms power-on animation in style.css, plus a short hold on the loader.
+const startupTime = 2100;
+
 const screen = document.querySelector('.screen');
 // Channel numbers follow this order: CH 01 is the first entry.
 const tuner = createTuner(screen, document.querySelector('#channel-display'), [
@@ -24,7 +27,7 @@ window.setTimeout(() => {
   document.querySelector('.tv-startup').hidden = true;
   document.body.classList.remove('is-starting');
   tuner.turnOn();
-}, 2100);
+}, startupTime);
 
 function animate(time) {
   tuner.update(time);

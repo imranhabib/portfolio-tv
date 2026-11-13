@@ -81,6 +81,19 @@ export function createDvdChannel(screen) {
     return physics.bounds(measure(element), getWorld());
   }
 
+  function clampToArea(area, x, y) {
+    return {
+      x: Math.max(area.left, Math.min(area.right, x)),
+      y: Math.max(area.top, Math.min(area.bottom, y)),
+    };
+  }
+
+  function nextVelocity() {
+    const velocity = patterns[nextPattern % patterns.length];
+    nextPattern += 1;
+    return velocity;
+  }
+
   function setColor(state) {
     state.element.style.color = colors[state.colorIndex];
   }
@@ -151,17 +164,9 @@ export function createDvdChannel(screen) {
     element.setAttribute('aria-label', 'DVD Video logo');
     screen.appendChild(element);
 
-    const [dx, dy] = patterns[nextPattern % patterns.length];
-    nextPattern += 1;
-    const area = getBounds(element);
-    createState(
-      element,
-      Math.max(area.left, Math.min(area.right, x)),
-      Math.max(area.top, Math.min(area.bottom, y)),
-      dx,
-      dy,
-      randomColorIndex(),
-    );
+    const [dx, dy] = nextVelocity();
+    const position = clampToArea(getBounds(element), x, y);
+    createState(element, position.x, position.y, dx, dy, randomColorIndex());
   }
 
   function removeLogo(state) {
@@ -179,16 +184,18 @@ export function createDvdChannel(screen) {
     element.rel = 'noopener noreferrer';
     screen.appendChild(element);
 
-    const [dx, dy] = patterns[nextPattern % patterns.length];
-    nextPattern += 1;
+    const [dx, dy] = nextVelocity();
     const area = getBounds(element);
     const textBounds = bioElement.getBoundingClientRect();
     const screenBounds = screen.getBoundingClientRect();
-    const x = Math.max(area.left, Math.min(area.right, screen.clientWidth / 2 - element.offsetWidth / 2));
     const aboveText = textBounds.top - screenBounds.top - element.offsetHeight - 10;
     const spawnBelow = aboveText < area.top;
-    const y = Math.max(area.top, Math.min(area.bottom, spawnBelow ? textBounds.bottom - screenBounds.top + 10 : aboveText));
-    const state = createState(element, x, y, dx, spawnBelow ? Math.abs(dy) : -Math.abs(dy), 1);
+    const position = clampToArea(
+      area,
+      screen.clientWidth / 2 - element.offsetWidth / 2,
+      spawnBelow ? textBounds.bottom - screenBounds.top + 10 : aboveText,
+    );
+    const state = createState(element, position.x, position.y, dx, spawnBelow ? Math.abs(dy) : -Math.abs(dy), 1);
     state.profile = profile;
   }
 
@@ -217,9 +224,7 @@ export function createDvdChannel(screen) {
   function resize() {
     bio.relayout();
     for (const state of logos) {
-      const area = getBounds(state.element);
-      state.x = Math.max(area.left, Math.min(area.right, state.x));
-      state.y = Math.max(area.top, Math.min(area.bottom, state.y));
+      Object.assign(state, clampToArea(getBounds(state.element), state.x, state.y));
       render(state);
     }
   }
@@ -261,11 +266,12 @@ export function createDvdChannel(screen) {
 
     const screenBounds = screen.getBoundingClientRect();
     const logoBounds = firstLogo.getBoundingClientRect();
-    const area = getBounds(firstLogo);
-    spawnLogo(
-      Math.max(area.left, Math.min(area.right, event.clientX - screenBounds.left - logoBounds.width / 2)),
-      Math.max(area.top, Math.min(area.bottom, event.clientY - screenBounds.top - logoBounds.height / 2)),
+    const position = clampToArea(
+      getBounds(firstLogo),
+      event.clientX - screenBounds.left - logoBounds.width / 2,
+      event.clientY - screenBounds.top - logoBounds.height / 2,
     );
+    spawnLogo(position.x, position.y);
   });
 
   createState(firstLogo, 0, 0, ...patterns[0]);

@@ -1,4 +1,13 @@
+// Snake channel: a classic Snake game on a 20 x 20 board. The best score is kept in localStorage.
 const size = 20;
+const cell = 24;
+const boardPixels = size * cell;
+const bestScoreKey = 'crt-snake-best';
+
+// The game speeds up as the snake eats: 160 ms per step, down to 75 ms.
+function stepInterval(score) {
+  return Math.max(75, 160 - score * 4);
+}
 
 export function createSnakeGame(random = Math.random) {
   const game = { body: [], direction: [1, 0], turns: [], food: null, score: 0, ended: false };
@@ -50,7 +59,7 @@ export function createSnakeChannel(element) {
   const button = element.querySelector('.snake-start');
   const game = createSnakeGame();
   let best = 0;
-  try { best = Math.max(0, Number(localStorage.getItem('crt-snake-best')) || 0); } catch { /* Storage may be disabled. */ }
+  try { best = Math.max(0, Number(localStorage.getItem(bestScoreKey)) || 0); } catch { /* Storage may be disabled. */ }
   let active = false;
   let state = 'ready';
   let lastTime;
@@ -59,21 +68,21 @@ export function createSnakeChannel(element) {
 
   function draw() {
     context.fillStyle = '#020b04';
-    context.fillRect(0, 0, 480, 480);
+    context.fillRect(0, 0, boardPixels, boardPixels);
     context.strokeStyle = '#12331a';
     context.lineWidth = 1;
     for (let n = 0; n <= size; n++) {
       context.beginPath();
-      context.moveTo(n * 24, 0); context.lineTo(n * 24, 480);
-      context.moveTo(0, n * 24); context.lineTo(480, n * 24); context.stroke();
+      context.moveTo(n * cell, 0); context.lineTo(n * cell, boardPixels);
+      context.moveTo(0, n * cell); context.lineTo(boardPixels, n * cell); context.stroke();
     }
     if (game.food) {
       context.fillStyle = '#e9ffc6';
-      context.fillRect(game.food[0] * 24 + 7, game.food[1] * 24 + 7, 10, 10);
+      context.fillRect(game.food[0] * cell + 7, game.food[1] * cell + 7, 10, 10);
     }
     game.body.forEach(([x, y], index) => {
       context.fillStyle = index === 0 ? '#bdff8d' : '#46e765';
-      context.fillRect(x * 24 + 2, y * 24 + 2, 20, 20);
+      context.fillRect(x * cell + 2, y * cell + 2, cell - 4, cell - 4);
     });
     score.textContent = String(game.score).padStart(3, '0');
     bestScore.textContent = String(best).padStart(3, '0');
@@ -135,17 +144,17 @@ export function createSnakeChannel(element) {
       if (lastTime === undefined) lastTime = time;
       accumulated += Math.min(time - lastTime, 250);
       lastTime = time;
-      let interval = Math.max(75, 160 - game.score * 4);
+      let interval = stepInterval(game.score);
       let changed = false;
       while (accumulated >= interval && state === 'running') {
         accumulated -= interval;
         game.step();
         if (game.score > best) {
           best = game.score;
-          try { localStorage.setItem('crt-snake-best', String(best)); } catch { /* Keep the score for this visit. */ }
+          try { localStorage.setItem(bestScoreKey, String(best)); } catch { /* Keep the score for this visit. */ }
         }
         if (game.ended) state = 'over';
-        interval = Math.max(75, 160 - game.score * 4);
+        interval = stepInterval(game.score);
         changed = true;
       }
       if (changed) draw();

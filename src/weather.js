@@ -1,4 +1,7 @@
+// Weather channel: renders the three-day forecast from forecast.js as a retro TV broadcast.
 import { getForecast } from './forecast.js';
+
+const hectopascalsPerInchOfMercury = 33.8639;
 
 export function weatherCondition(code) {
   if (code === 0) return { label: 'Sunny', type: 'sun' };
@@ -63,7 +66,7 @@ export function createWeatherBroadcast(element) {
       temperatures[1].textContent = Math.round(day.high);
     });
     pressure.textContent = Number.isFinite(forecast.pressure)
-      ? `BAROMETRIC PRESSURE: ${(forecast.pressure / 33.8639).toFixed(2)} IN.`
+      ? `BAROMETRIC PRESSURE: ${(forecast.pressure / hectopascalsPerInchOfMercury).toFixed(2)} IN.`
       : 'BAROMETRIC PRESSURE: UNAVAILABLE';
     if (forecast.source === 'NWS') {
       const source = element.querySelector('.weather-credits a');
