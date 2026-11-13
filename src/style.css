@@ -247,14 +247,15 @@ body {
   inset: 0;
   z-index: 3;
   background: #160e3c;
+  container-type: size;
 }
 
 #weather-channel:not([hidden]) { display: grid; place-items: center; }
 
 .weather-broadcast {
   container-type: inline-size;
-  width: 100%;
-  max-height: 100%;
+  /* Largest 4:3 box that fits the screen; the text below is sized from this width. */
+  width: min(100cqw, 100cqh * 4 / 3);
   aspect-ratio: 4 / 3;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
