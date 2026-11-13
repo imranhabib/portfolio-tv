@@ -17,6 +17,7 @@ const tuner = createTuner(screen, document.querySelector('#channel-display'), [
   createWebcamChannel(document.querySelector('#webcam-channel')),
   matrix,
   createWeatherBroadcast(document.querySelector('#weather-channel')),
+  createWebcamChannel(document.querySelector('#iss-channel')),
   createSnakeChannel(document.querySelector('#snake-channel')),
 ]);
 
