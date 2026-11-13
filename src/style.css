@@ -583,15 +583,13 @@ body {
   39% { translate: -0.8px 0; }
 }
 
+/* Reduce Motion turns off the looping CRT effects only. The power-on and power-off
+   animations (picture opening from and collapsing to a line) always play. */
 @media (prefers-reduced-motion: reduce) {
   .screen,
   .screen::before,
-  .tv-picture,
-  .tv-bars,
   .tv-static,
-  .tv-loading,
-  .tv-loading::after,
-  #matrix-channel.is-powering-on { animation: none; }
+  .tv-loading::after { animation: none; }
   .crt-tracking { display: none; }
 }
 
