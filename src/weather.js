@@ -1,59 +1,4 @@
-const seattle = { city: 'Seattle', latitude: 47.6062, longitude: -122.3321, country: 'US', fallback: true };
-
-async function fetchJSON(url) {
-  const response = await fetch(url, {
-    signal: AbortSignal.timeout(5000), credentials: 'omit', referrerPolicy: 'no-referrer',
-  });
-  if (!response.ok) throw new Error('Weather service unavailable');
-  return response.json();
-}
-
-export async function getWeatherLocation() {
-  try {
-    const data = await fetchJSON('https://ipapi.co/json/');
-    if (data.error || !data.city || !Number.isFinite(data.latitude) || !Number.isFinite(data.longitude)) return seattle;
-    return { city: data.city, latitude: data.latitude, longitude: data.longitude, country: data.country_code, fallback: false };
-  } catch {
-    return seattle;
-  }
-}
-
-async function getNWSForecast(location) {
-  const point = await fetchJSON(`https://api.weather.gov/points/${location.latitude},${location.longitude}`);
-  const forecast = await fetchJSON(point.properties.forecast);
-  const days = new Map();
-  for (const period of forecast.properties.periods) {
-    const date = period.startTime.slice(0, 10);
-    const day = days.get(date) || { date };
-    const temperature = period.temperatureUnit === 'C' ? period.temperature * 9 / 5 + 32 : period.temperature;
-    if (period.isDaytime) { day.high = temperature; day.label = period.shortForecast; }
-    else day.low = temperature;
-    days.set(date, day);
-  }
-  const complete = [...days.values()].filter(day => Number.isFinite(day.high) && Number.isFinite(day.low)).slice(0, 3);
-  if (complete.length !== 3) throw new Error('Incomplete forecast');
-  const codes = complete.map(day => {
-    if (/thunder/i.test(day.label)) return 95;
-    if (/snow|sleet|ice/i.test(day.label)) return 73;
-    if (/rain|shower|drizzle/i.test(day.label)) return 61;
-    if (/fog/i.test(day.label)) return 45;
-    if (/partly|mostly sunny/i.test(day.label)) return 2;
-    if (/cloud|overcast/i.test(day.label)) return 3;
-    return /sunny|clear/i.test(day.label) ? 0 : -1;
-  });
-  const result = {
-    timezone: point.properties.timeZone, source: 'NWS', current: {},
-    daily: { time: complete.map(day => day.date), weather_code: codes, temperature_2m_min: complete.map(day => day.low), temperature_2m_max: complete.map(day => day.high) },
-  };
-  // Pressure is optional; an unavailable observation must not hide the forecast.
-  try {
-    const stations = await fetchJSON(point.properties.observationStations);
-    const observation = await fetchJSON(`${stations.features[0].id}/observations/latest`);
-    const pressure = observation.properties.seaLevelPressure?.value ?? observation.properties.barometricPressure?.value;
-    if (Number.isFinite(pressure)) result.current.pressure_msl = pressure / 100;
-  } catch { /* Keep the three-day forecast if observations are unavailable. */ }
-  return result;
-}
+import { getForecast } from './forecast.js';
 
 export function weatherCondition(code) {
   if (code === 0) return { label: 'Sunny', type: 'sun' };
@@ -97,49 +42,40 @@ export function createWeatherBroadcast(element) {
   }
 
   async function load() {
-    const location = await getWeatherLocation();
+    const { location, forecast } = await getForecast();
     city.textContent = `${location.city} Metro`;
     status.textContent = location.fallback ? 'SEATTLE DEFAULT FORECAST' : 'LOCAL FORECAST · IP-BASED CITY';
-    try {
-      const params = new URLSearchParams({
-        latitude: location.latitude, longitude: location.longitude,
-        daily: 'weather_code,temperature_2m_max,temperature_2m_min',
-        current: 'pressure_msl', temperature_unit: 'fahrenheit', timezone: 'auto', forecast_days: '3',
-      });
-      let data;
-      if (location.country === 'US') {
-        try {
-          data = await getNWSForecast(location);
-        } catch {
-          data = await fetchJSON(`https://api.open-meteo.com/v1/forecast?${params}`);
-        }
-      } else data = await fetchJSON(`https://api.open-meteo.com/v1/forecast?${params}`);
-      const daily = data.daily;
-      if (!daily || daily.time?.length !== 3 || !['weather_code', 'temperature_2m_max', 'temperature_2m_min'].every(key => daily[key]?.length === 3 && daily[key].every(Number.isFinite))) throw new Error('Incomplete forecast');
-      timezone = data.timezone || timezone;
-      lastClockSecond = undefined;
-      [...grid.children].forEach((card, index) => {
-        const condition = weatherCondition(daily.weather_code[index]);
-        card.querySelector('h3').textContent = new Date(`${daily.time[index]}T12:00:00Z`).toLocaleDateString('en-US', { weekday: 'short', timeZone: 'UTC' }).toUpperCase();
-        card.querySelector('.weather-icon').innerHTML = weatherIcon(condition.type);
-        card.querySelector('.weather-condition').textContent = condition.label;
-        const temperatures = card.querySelectorAll('strong');
-        temperatures[0].textContent = Math.round(daily.temperature_2m_min[index]);
-        temperatures[1].textContent = Math.round(daily.temperature_2m_max[index]);
-      });
-      pressure.textContent = Number.isFinite(data.current?.pressure_msl)
-        ? `BAROMETRIC PRESSURE: ${(data.current.pressure_msl / 33.8639).toFixed(2)} IN.`
-        : 'BAROMETRIC PRESSURE: UNAVAILABLE';
-      if (data.source === 'NWS') {
-        const source = element.querySelector('.weather-credits a');
-        source.textContent = 'NATIONAL WEATHER SERVICE · °F';
-        source.href = 'https://www.weather.gov/';
-      }
-    } catch {
+    if (!forecast) {
       status.textContent = 'FORECAST TEMPORARILY UNAVAILABLE';
       [...grid.querySelectorAll('.weather-condition')].forEach(label => { label.textContent = 'No signal'; });
+      return;
+    }
+    timezone = forecast.timezone || timezone;
+    lastClockSecond = undefined;
+    [...grid.children].forEach((card, index) => {
+      const day = forecast.days[index];
+      const condition = weatherCondition(day.code);
+      card.querySelector('h3').textContent = new Date(`${day.date}T12:00:00Z`).toLocaleDateString('en-US', { weekday: 'short', timeZone: 'UTC' }).toUpperCase();
+      card.querySelector('.weather-icon').innerHTML = weatherIcon(condition.type);
+      card.querySelector('.weather-condition').textContent = condition.label;
+      const temperatures = card.querySelectorAll('strong');
+      temperatures[0].textContent = Math.round(day.low);
+      temperatures[1].textContent = Math.round(day.high);
+    });
+    pressure.textContent = Number.isFinite(forecast.pressure)
+      ? `BAROMETRIC PRESSURE: ${(forecast.pressure / 33.8639).toFixed(2)} IN.`
+      : 'BAROMETRIC PRESSURE: UNAVAILABLE';
+    if (forecast.source === 'NWS') {
+      const source = element.querySelector('.weather-credits a');
+      source.textContent = 'NATIONAL WEATHER SERVICE · °F';
+      source.href = 'https://www.weather.gov/';
     }
   }
 
-  return { updateClock, load: () => { loading ??= load(); return loading; } };
+  return {
+    element,
+    enter: () => { loading ??= load(); return loading; },
+    leave() {},
+    update: updateClock,
+  };
 }

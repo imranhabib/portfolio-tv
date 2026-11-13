@@ -122,8 +122,9 @@ export function createSnakeChannel(element) {
   });
 
   return {
-    activate() { active = true; lastTime = undefined; draw(); },
-    pause() {
+    element,
+    enter() { active = true; lastTime = undefined; draw(); },
+    leave() {
       active = false;
       gesture = undefined;
       lastTime = undefined;

@@ -25,9 +25,17 @@ no runtime dependencies.
 
 ```
 index.html        TV markup and channel sections
-src/main.js       Startup, DVD logo, typewriter bio, channel switching
-src/weather.js    Weather channel
-src/snake.js      Snake game channel
+src/main.js       Startup and wiring: builds the channels and hands them to the tuner
+src/tuner.js      Channel switching, the blank between channels, and the CH overlay
+src/dvd.js        Channel 1: bouncing DVD logos and profile icons
+src/bio.js        Typewriter bio text and its mobile corner layout
+src/physics.js    Movement and collisions for the bouncing icons (no DOM)
+src/experience.js Channel 2: auto-scrolling LinkedIn profile
+src/webcam.js     Channel 3: live webcam
+src/weather.js    Channel 4: weather broadcast (rendering)
+src/forecast.js   Location and forecast providers (NWS, Open-Meteo)
+src/matrix.js     Channel 5: Matrix terminal
+src/snake.js      Channel 6: Snake game
 src/style.css     TV cabinet, CRT effects and channel styles
 public/assets/    Static images
 scripts/          Node check scripts for channel, layout and game logic

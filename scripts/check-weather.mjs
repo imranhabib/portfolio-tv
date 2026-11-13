@@ -31,8 +31,8 @@ try {
     };
     const { nodes, cards, root } = fixture();
     const weather = createWeatherBroadcast(root);
-    await weather.load();
-    await weather.load();
+    await weather.enter();
+    await weather.enter();
     assert.equal(calls.length, fallback ? 3 : 2, 'Forecast should be cached between channel changes');
     assert.equal(nodes['.weather-city'].textContent, fallback ? 'Seattle Metro' : 'Toronto Metro');
     assert.ok(calls.at(-1).includes(fallback ? 'latitude=47.6062' : 'latitude=43.65'));
@@ -40,7 +40,7 @@ try {
     assert.deepEqual(cards.map(card => card.temperatures.map(node => node.textContent)), [[40, 54], [43, 57], [39, 48]]);
     assert.equal(nodes['.weather-pressure'].textContent, 'BAROMETRIC PRESSURE: 29.92 IN.');
     assert.match(cards[0].parts['.weather-icon'].innerHTML, /<svg/);
-    weather.updateClock(0);
+    weather.update(0);
     assert.ok(nodes['.weather-clock'].textContent.includes('\n'));
   }
   const usCalls = [];
@@ -55,7 +55,7 @@ try {
     throw new Error('Observations unavailable');
   };
   const backup = fixture();
-  await createWeatherBroadcast(backup.root).load();
+  await createWeatherBroadcast(backup.root).enter();
   assert.ok(usCalls[1].includes('api.weather.gov/points/47.474046,-122.260966'), 'US forecasts should go directly to NWS');
   assert.ok(usCalls.every(url => !url.includes('api.open-meteo.com')), 'Working NWS forecasts must not call the failing Open-Meteo endpoint');
   assert.equal(backup.nodes['.weather-credits a'].textContent, 'NATIONAL WEATHER SERVICE · °F');
@@ -65,7 +65,7 @@ try {
 
   globalThis.fetch = async () => { throw new Error('Offline'); };
   const { root, nodes, cards } = fixture();
-  await createWeatherBroadcast(root).load();
+  await createWeatherBroadcast(root).enter();
   assert.equal(nodes['.weather-city'].textContent, 'Seattle Metro');
   assert.equal(nodes['.weather-status'].textContent, 'FORECAST TEMPORARILY UNAVAILABLE');
   assert.ok(cards.every(card => card.parts['.weather-condition'].textContent === 'No signal'));
