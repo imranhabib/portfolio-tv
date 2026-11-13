@@ -33,6 +33,9 @@ const colors = [
   '#c487a5',
 ];
 
+// At most this many DVD logos at once, whether added by clicks or on returning to the channel.
+const maxDvdLogos = 20;
+
 const patterns = [
   [ 240, 176 ],
   [ -204, 252 ],
@@ -159,6 +162,7 @@ export function createDvdChannel(screen) {
   }
 
   function spawnLogo(x, y) {
+    if (logos.filter((state) => !state.profile).length >= maxDvdLogos) return;
     const element = firstLogo.cloneNode(true);
     element.removeAttribute('aria-hidden');
     element.setAttribute('aria-label', 'DVD Video logo');
@@ -167,6 +171,11 @@ export function createDvdChannel(screen) {
     const [dx, dy] = nextVelocity();
     const position = clampToArea(getBounds(element), x, y);
     createState(element, position.x, position.y, dx, dy, randomColorIndex());
+  }
+
+  function spawnLogoAnywhere() {
+    const world = getWorld();
+    spawnLogo(Math.random() * world.width, Math.random() * world.height);
   }
 
   function removeLogo(state) {
@@ -230,6 +239,8 @@ export function createDvdChannel(screen) {
   }
 
   let active = true;
+  // True after reset(), so the next showing does not count as a return.
+  let fresh = false;
   let pressedProfileHref = null;
 
   screen.addEventListener('pointerdown', (event) => {
@@ -282,6 +293,18 @@ export function createDvdChannel(screen) {
     enter() {
       active = true;
       bio.resume(performance.now());
+      // Each return to the channel adds a DVD logo, except the first showing after a reset.
+      if (fresh) fresh = false;
+      else spawnLogoAnywhere();
+    },
+    // Back to the start: only the original DVD logo, and the bio types again from the beginning.
+    reset() {
+      [...logos].forEach(removeLogo);
+      nextPattern = 1;
+      screen.appendChild(firstLogo);
+      createState(firstLogo, 0, 0, ...patterns[0]);
+      bio.restart();
+      fresh = true;
     },
     leave() {
       active = false;

@@ -91,6 +91,7 @@ try {
       enter() { log.push(`enter ${index + 1}`); },
       leave() { log.push(`leave ${index + 1}`); },
       update(time) { log.push(`update ${index + 1} @${time}`); },
+      ...(index === 0 && { reset() { log.push('reset 1'); } }),
     }));
     const classes = new Set();
     const screen = { dataset: {}, classList: { add: (name) => classes.add(name), remove: (name) => classes.delete(name) } };
@@ -103,17 +104,17 @@ try {
     log.length = 0;
 
     tuner.turnOff();
-    assert.deepEqual(log, ['leave 3'], 'Turning off leaves the current channel');
+    assert.deepEqual(log, ['leave 3', 'reset 1'], 'Turning off leaves the current channel and resets channels that can be reset');
     assert.equal(display.hidden, true, 'No CH number while off');
     assert.equal(screen.dataset.channel, 'off');
     assert.ok(channels.slice(1).every((channel) => channel.element.hidden), 'Nothing is shown while off');
     tuner.update(1);
     tuner.change(1);
     assert.equal([...timers.values()].filter((timer) => timer.delay === 180).length, 0, 'CH buttons do nothing while off');
-    assert.deepEqual(log, ['leave 3'], 'No frames while off');
+    assert.deepEqual(log, ['leave 3', 'reset 1'], 'No frames while off');
 
     tuner.turnOn();
-    assert.deepEqual(log, ['leave 3', 'enter 3'], 'Turning on returns to the last channel');
+    assert.deepEqual(log, ['leave 3', 'reset 1', 'enter 3'], 'Turning on returns to the last channel');
     assert.equal(display.textContent, 'CH 03');
     assert.equal(display.hidden, false);
     assert.equal(screen.dataset.channel, '3');
@@ -124,11 +125,11 @@ try {
     log.length = 0;
     tuner.change(1);
     tuner.turnOff();
-    assert.deepEqual(log, ['leave 3'], 'Turning off mid-switch does not leave twice');
+    assert.deepEqual(log, ['leave 3', 'reset 1'], 'Turning off mid-switch does not leave twice');
     assert.ok(!classes.has('channel-changing'));
     assert.equal([...timers.values()].filter((timer) => timer.delay === 180).length, 0, 'A pending switch is cancelled');
     tuner.turnOn();
-    assert.deepEqual(log, ['leave 3', 'enter 4'], 'The channel that was being switched to comes on');
+    assert.deepEqual(log, ['leave 3', 'reset 1', 'enter 4'], 'The channel that was being switched to comes on');
     assert.equal(display.textContent, 'CH 04');
   }
 

@@ -11,7 +11,7 @@ while the TV is off. Press POWER again to return to the last channel.
 
 | Channel | Content |
 |---|---|
-| 1 | Bouncing DVD logo with a typewriter bio. Click the screen to add a DVD logo, click a logo to remove it, and click the bio to add a LinkedIn or GitHub icon. |
+| 1 | Bouncing DVD logo with a typewriter bio. Click the screen to add a DVD logo, click a logo to remove it, and click the bio to add a LinkedIn or GitHub icon. Each return to the channel adds a DVD logo. There are never more than 20 DVD logos. Turning the TV off and on starts the channel fresh. |
 | 2 | LinkedIn profile that scrolls by itself. Scroll or drag to take over; auto-scroll starts again 2 seconds later. |
 | 3 | Banzai Pipeline live webcam from Port of Cams. It is view-only: clicks do not reach the player. |
 | 4 | Matrix-style terminal that greets the visitor by IP address |

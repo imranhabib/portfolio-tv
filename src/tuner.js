@@ -5,6 +5,7 @@
 //   enter()      the channel is now on screen
 //   leave()      the channel is going off screen (called when the screen blanks)
 //   update(time) every animation frame while the channel is on screen and the TV is on
+//   reset()      optional: called on every channel when the TV turns off, to clear its state
 // Channel 1 starts on screen without an enter() call.
 const switchDelay = 180;
 const displayTime = 1000;
@@ -58,6 +59,7 @@ export function createTuner(screen, display, channels) {
       screen.dataset.channel = 'off';
       channels.forEach((channel) => {
         if (channel.element) channel.element.hidden = true;
+        channel.reset?.();
       });
     },
     // Move `step` channels up (+) or down (-), wrapping around. Rapid presses add up.
