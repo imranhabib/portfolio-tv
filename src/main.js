@@ -1,4 +1,5 @@
 import './style.css';
+import { inject } from '@vercel/analytics';
 import { createTuner } from './tuner.js';
 import { createPower } from './power.js';
 import { createDvdChannel } from './dvd.js';
@@ -8,6 +9,8 @@ import { createYouTubeChannel } from './youtube.js';
 import { createMatrixChannel } from './matrix.js';
 import { createWeatherBroadcast } from './weather.js';
 import { createSnakeChannel } from './snake.js';
+
+inject();
 
 const screen = document.querySelector('.screen');
 const matrix = createMatrixChannel(document.querySelector('#matrix-channel'));
