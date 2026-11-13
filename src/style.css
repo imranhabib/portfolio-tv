@@ -80,19 +80,47 @@ body {
   background: repeating-linear-gradient(to bottom, #121315 0 2px, #4b4c4e 2px 3px, transparent 3px 5px);
 }
 
-.tv-power-light {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #a7d787;
-  box-shadow: 0 0 5px #a7d78766;
+.tv-channel-controls,
+.tv-standby,
+.tv-power {
+  /* Same label row and control row in each group, so labels and controls line up. */
+  display: grid;
+  grid-template-rows: 9px var(--tv-control-size, 32px);
+  row-gap: 7px;
+  justify-items: center;
+  align-items: center;
 }
 
-.tv-channel-controls {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-left: auto;
+.tv-channel-controls { margin-left: auto; }
+
+/* Printed panel labels, as on the reference TV. */
+.tv-label {
+  color: #d3d6cc;
+  font: 700 9px/1 Arial, Helvetica, sans-serif;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  text-shadow: 0 1px 0 #111611;
+}
+
+/* The CH and STATUS labels sit just above their control; the controls stay on one centre line. */
+.tv-channel-controls > *,
+.tv-standby > * { grid-row: 2; grid-column: 1; }
+.tv-channel-controls .tv-label { translate: 0 calc(var(--tv-rocker-height, 15px) / -2 - 8.5px); }
+.tv-standby .tv-label { translate: 0 -12px; font-size: 7px; }
+.tv-power .tv-label { font-size: 8px; }
+
+.tv-power-light {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4dff3a;
+  box-shadow: 0 0 6px 1px #4dff3a99;
+  transition: background 200ms ease, box-shadow 200ms ease;
+}
+
+.tv-power-light.is-standby {
+  background: #ff3b2f;
+  box-shadow: 0 0 6px 1px #ff3b2f99;
 }
 
 .tv-brand {
@@ -123,24 +151,57 @@ body {
   text-shadow: 1px 0 2px #39ff1480, 0 0 6px #39ff1460;
 }
 
-.tv-channel-controls button {
-  min-width: 58px;
-  min-height: 30px;
-  border: 1px solid #111;
-  border-radius: 3px;
-  background: linear-gradient(#697267, #414b40);
-  box-shadow: inset 0 1px 0 #8c9587, 0 2px 0 #1e281f;
-  color: #e1e1dd;
-  font: 11px ui-monospace, monospace;
+/* Black rocker: CH down and CH up joined into one bar. */
+.tv-rocker {
+  display: flex;
+  gap: 1px;
+  padding: 2px;
+  border-radius: 8px;
+  background: #070908;
+  box-shadow: 0 1px 0 #5a6257;
+}
+
+.tv-rocker button {
+  position: relative;
+  width: 18px;
+  height: 11px;
+  padding: 0;
+  border: 0;
+  background: linear-gradient(#3d413f, #1c1f1d 45%, #0e100f);
+  box-shadow: inset 0 1px 0 #6f766f, inset 0 -2px 3px #000;
   cursor: pointer;
 }
 
-.tv-channel-controls button:active {
-  translate: 0 2px;
-  box-shadow: inset 0 1px 3px #111, 0 1px 0 #131416;
+.tv-rocker button:first-child { border-radius: 6px 2px 2px 6px; }
+.tv-rocker button:last-child { border-radius: 2px 6px 6px 2px; }
+
+/* Round POWER button with a ring and a centre dimple. */
+#power {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 2px solid #050605;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 38%, #2c302e, #111312 62%, #070808);
+  box-shadow: 0 0 0 3px #1b201c, 0 0 0 4px #4d554b, inset 0 1px 1px #5f665f, inset 0 -3px 5px #000;
+  cursor: pointer;
 }
 
-.tv-channel-controls button:focus-visible { outline: 2px solid #a7d787; outline-offset: 4px; }
+#power::after {
+  content: "";
+  position: absolute;
+  inset: 38%;
+  border-radius: 50%;
+  box-shadow: inset 0 1px 1px #000, 0 1px 0 #3d433d;
+}
+
+:is(.tv-rocker button, #power):active {
+  translate: 0 1px;
+  box-shadow: inset 0 2px 4px #000;
+}
+
+:is(.tv-rocker button, #power):focus-visible { outline: 2px solid #a7d787; outline-offset: 3px; }
 
 .tv-ports {
   position: relative;
@@ -427,6 +488,23 @@ body {
   animation: crt-grain 350ms steps(3, end) infinite;
 }
 
+/* Turning off: the turn-on animation plays backwards, so the picture collapses to a line and then a dot. */
+.tv-startup.is-shutting-down :is(.tv-picture, .tv-bars, .tv-loading) {
+  animation-direction: reverse;
+  animation-duration: 1900ms;
+}
+
+.tv-startup.is-shutting-down .tv-loading::before { content: "SHUTTING DOWN"; }
+
+/* Powered off: plain black, with no CRT effects. */
+.screen.is-dark { animation: none; }
+.screen.is-dark::before,
+.screen.is-dark::after,
+.screen.is-dark .crt-tracking { display: none; }
+
+/* The standby screen turns on like the TV (line opening up and down), without colour bars. */
+#matrix-channel.is-powering-on { animation: tv-power-on 1600ms cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+
 .tv-startup::after {
   content: "";
   position: absolute;
@@ -512,7 +590,8 @@ body {
   .tv-bars,
   .tv-static,
   .tv-loading,
-  .tv-loading::after { animation: none; }
+  .tv-loading::after,
+  #matrix-channel.is-powering-on { animation: none; }
   .crt-tracking { display: none; }
 }
 
@@ -660,11 +739,22 @@ body {
   .tv-controls::before { top: 14px; height: 34px; left: 6%; right: 6%; }
   .tv-speaker { display: none; }
   .tv-brand { width: 32px; height: 44px; bottom: 6px; }
-  .tv-power-light { position: absolute; left: 47px; bottom: 25px; }
+  .tv-controls { --tv-control-size: 35px; --tv-rocker-height: 24px; }
+  .tv-standby { position: absolute; left: 50px; bottom: 6px; }
   .tv-ports { position: absolute; left: 6px; bottom: 17px; width: 34px; height: 22px; gap: 4px; }
   .tv-port { width: 10px; height: 10px; }
-  .tv-channel-controls { gap: 4px; }
-  .tv-channel-controls button { min-width: 44px; min-height: 44px; }
+  .tv-rocker button { width: 22px; height: 20px; }
+  .tv-rocker button:first-child { border-radius: 10px 2px 2px 10px; }
+  .tv-rocker button:last-child { border-radius: 2px 10px 10px 2px; }
+  .tv-rocker { border-radius: 12px; }
+  #power { width: 35px; height: 35px; }
+  /* Invisible hit areas keep the small buttons easy to tap. */
+  .tv-rocker button::before,
+  #power::before { content: ""; position: absolute; }
+  .tv-rocker button:first-child::before { inset: -12px 0 -12px -12px; }
+  /* Only 4px to the right, so it never overlaps the POWER button's tap area. */
+  .tv-rocker button:last-child::before { inset: -12px -4px -12px 0; }
+  #power::before { inset: -5px; border-radius: 50%; }
   .profile-icon {
     width: 40px;
     height: 40px;
@@ -672,7 +762,7 @@ body {
 
   #bio {
     top: env(safe-area-inset-top, 0px);
-    right: max(8px, env(safe-area-inset-right));
+    right: env(safe-area-inset-right, 0px);
     left: max(20px, env(safe-area-inset-left));
     text-align: right;
     transform: none;
@@ -689,12 +779,13 @@ body {
     left: 0;
     display: inline-block;
     white-space: pre;
+    line-height: 1;
     transform-origin: top left;
     pointer-events: auto;
   }
 
   .dvd-logo {
-    width: 120px;
+    width: 100px;
     height: auto;
     aspect-ratio: 190 / 78;
   }

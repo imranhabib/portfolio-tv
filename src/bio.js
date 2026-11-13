@@ -41,16 +41,15 @@ export function createBio(element, frame, mobileScreen) {
     }
     const space = 4;
     const totalWidth = borderWordWidths.reduce((sum, width) => sum + width + space, 0);
-    const lineHeight = parseFloat(getComputedStyle(element).lineHeight);
-    const topWordCount = wordText.indexOf('engineer') + 1;
-    const topWidth = borderWordWidths.slice(0, topWordCount).reduce((sum, width) => sum + width, 0) + (topWordCount - 1) * space;
-    const sideWidth = totalWidth - topWidth - space;
     const radius = 44;
     const cornerStart = element.clientWidth - radius;
     const arcLength = Math.PI * radius / 2;
     const curveSpacing = 2;
-    const scale = Math.min(1, cornerStart / topWidth, (element.clientHeight - radius + arcLength - lineHeight - 24) / (sideWidth + space));
-    let distance = Math.max(0, cornerStart - topWidth * scale);
+    const sideRoom = element.clientHeight - radius + arcLength;
+    // The text starts at the left end of the top edge, bends round the corner and runs down the
+    // side. Scale it so it fills that whole path (never above its CSS size).
+    const scale = Math.min(1, (cornerStart + sideRoom) / (totalWidth - space));
+    let distance = 0;
     for (const word of words) {
       if (!word.textContent.length) continue;
       for (const letter of word.querySelectorAll('.bio-letter')) {

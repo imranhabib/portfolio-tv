@@ -34,7 +34,7 @@
         </svg>
       </div>
       <div id="bio">
-        <div class="bio-line"><span class="bio-word">imran</span> <span class="bio-word">habib</span> <span class="bio-word">currently</span> <span class="bio-word">a</span> <span class="bio-word">senior</span> <span class="bio-word">software</span> <span class="bio-word">engineer</span> <span class="bio-word">@</span> <span class="bio-word">atlassian</span></div>
+        <div class="bio-line"><span class="bio-word">imran</span> <span class="bio-word">habib</span> <span class="bio-word">currently</span> <span class="bio-word">a</span> <span class="bio-word">senior</span> <span class="bio-word">software</span> <span class="bio-word">engineer</span> <span class="bio-word">@</span> <span class="bio-word">atlassian.</span></div>
         <div class="bio-line"><span class="bio-word">previously,</span> <span class="bio-word">he</span> <span class="bio-word">led</span> <span class="bio-word">engineering</span> <span class="bio-word">teams</span> <span class="bio-word">at</span> <span class="bio-word">the</span> <span class="bio-word">royal</span> <span class="bio-word">bank</span> <span class="bio-word">of</span> <span class="bio-word">canada</span></div>
         <div class="bio-line"><span class="bio-word">is</span> <span class="bio-word">a</span> <span class="bio-word">30</span> <span class="bio-word">under</span> <span class="bio-word">30</span> <span class="bio-word">alumni</span> <span class="bio-word">&amp;</span> <span class="bio-word">more</span></div>
       </div>
@@ -83,15 +83,25 @@
     </div>
     <div class="tv-controls">
       <div class="tv-speaker" aria-hidden="true"></div>
-      <span class="tv-power-light" aria-hidden="true"></span>
       <span class="tv-brand" role="img" aria-label="RCA">
         <svg viewBox="0 0 147.628 44.383" aria-hidden="true">
           <path fill="currentColor" d="M95.972 42.833h19.621l7.242-17.146V8.851h4.891v33.982h18.197V2.166h-32.928zM1.927 42.833h18.445V8.789h4.952v17.703l7.18 16.341h19.25l-9.16-17.765c2.724-2.538 3.59-4.581 3.59-8.914 0-11.327-3.404-13.989-13.494-13.989H1.927v40.668zM72.35 8.344h5.138v11.575h19.188c.063-1.114 0-2.104 0-2.6 0-13.556-4.085-15.97-21.416-15.97-19.25 0-22.098 3.59-22.098 18.012 0 21.603.929 24.45 22.098 24.45 18.879 0 21.169-3.342 21.416-18.755H77.488v11.946H72.35V8.344z" />
         </svg>
       </span>
       <div class="tv-channel-controls" role="group" aria-label="TV channel controls">
-        <button id="channel-down" type="button" aria-label="Previous channel">CH −</button>
-        <button id="channel-up" type="button" aria-label="Next channel">CH +</button>
+        <span class="tv-label" aria-hidden="true">∨ CH ∧</span>
+        <div class="tv-rocker">
+          <button id="channel-down" type="button" aria-label="Previous channel"></button>
+          <button id="channel-up" type="button" aria-label="Next channel"></button>
+        </div>
+      </div>
+      <div class="tv-standby" aria-hidden="true">
+        <span class="tv-label">STATUS</span>
+        <span class="tv-power-light"></span>
+      </div>
+      <div class="tv-power">
+        <span class="tv-label" aria-hidden="true">POWER</span>
+        <button id="power" type="button" aria-label="Power" aria-pressed="true"></button>
       </div>
       <div class="tv-ports" aria-hidden="true">
         <span class="tv-port-label">AV IN</span>

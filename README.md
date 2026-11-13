@@ -2,7 +2,10 @@
 
 A personal portfolio homepage styled as a retro CRT television. The page "turns on" with
 static and colour bars, then shows a bouncing DVD logo while a short bio types itself onto
-the screen. Use the channel buttons below the screen to change channels.
+the screen. Use the channel buttons below the screen to change channels. The POWER button
+turns the TV off: the picture collapses to a line ("SHUTTING DOWN"), the screen stays black
+for a second, then it comes back on with a Matrix-style message. The STATUS light is red
+while the TV is off. Press POWER again to return to the last channel.
 
 ## Channels
 
@@ -11,8 +14,8 @@ the screen. Use the channel buttons below the screen to change channels.
 | 1 | Bouncing DVD logo with a typewriter bio. Click the screen to add a DVD logo, click a logo to remove it, and click the bio to add a LinkedIn or GitHub icon. |
 | 2 | LinkedIn profile that scrolls by itself. Scroll or drag to take over; auto-scroll starts again 2 seconds later. |
 | 3 | Banzai Pipeline live webcam from Port of Cams. It is view-only: clicks do not reach the player. |
-| 4 | Local weather forecast (based on the visitor's approximate location) |
-| 5 | Matrix-style terminal that greets the visitor by IP address |
+| 4 | Matrix-style terminal that greets the visitor by IP address |
+| 5 | Local weather forecast (based on the visitor's approximate location) |
 | 6 | Snake. Use the arrow keys, WASD or swipes to turn, and Space to pause. The best score is kept in the browser. |
 
 The site calls these external services from the visitor's browser:
@@ -37,14 +40,15 @@ no runtime dependencies.
 index.html        TV markup and channel sections
 src/main.js       Startup and wiring: builds the channels and hands them to the tuner
 src/tuner.js      Channel switching, the blank between channels, and the CH overlay
+src/power.js      Start-up screen, POWER button and standby light
 src/dvd.js        Channel 1: bouncing DVD logos and profile icons
 src/bio.js        Typewriter bio text and its mobile corner layout
 src/physics.js    Movement and collisions for the bouncing icons (no DOM)
 src/experience.js Channel 2: auto-scrolling LinkedIn profile
 src/webcam.js     Channel 3: live webcam
-src/weather.js    Channel 4: weather broadcast (rendering)
+src/weather.js    Channel 5: weather broadcast (rendering)
 src/forecast.js   Location and forecast providers (NWS, Open-Meteo)
-src/matrix.js     Channel 5: Matrix terminal
+src/matrix.js     Channel 4: Matrix terminal
 src/snake.js      Channel 6: Snake game
 src/style.css     TV cabinet, CRT effects and channel styles
 public/           Favicon and static images
