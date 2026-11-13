@@ -372,6 +372,39 @@ body {
 .weather-day h3 { width: 100%; margin: 0; padding-bottom: 3%; border-bottom: 1px solid #bbb2eb; color: #fff3ae; font-size: clamp(11px, 3.2cqw, 32px); font-weight: 400; line-height: 1; }
 .weather-icon { width: 90%; min-height: 0; flex: 1; display: grid; place-items: center; }
 .weather-icon svg { width: 100%; max-height: 17cqw; filter: drop-shadow(2px 3px 1px #14114c); }
+
+/* Animated weather icons: sun rays turn, clouds drift, rain and snow fall, fog slides, lightning flickers.
+   SVG user units: 1px here is 1 unit of the 110-unit icon. */
+.weather-icon svg * { transform-box: fill-box; transform-origin: center; }
+.wx-rays { animation: wx-turn 24s linear infinite; }
+.wx-cloud { animation: wx-drift 5s ease-in-out infinite alternate; }
+.wx-rain path { animation: wx-rain 0.9s linear infinite; }
+.wx-rain path:nth-child(2) { animation-delay: -0.3s; }
+.wx-rain path:nth-child(3) { animation-delay: -0.6s; }
+.wx-snow circle { animation: wx-snow 2.4s linear infinite; }
+.wx-snow circle:nth-child(2) { animation-delay: -0.8s; }
+.wx-snow circle:nth-child(3) { animation-delay: -1.6s; }
+.wx-fog path { animation: wx-drift 4s ease-in-out infinite alternate; }
+.wx-fog path:nth-child(2) { animation-direction: alternate-reverse; }
+.wx-bolt { animation: wx-flash 3.2s linear infinite; }
+
+@keyframes wx-turn { to { transform: rotate(360deg); } }
+@keyframes wx-drift { from { transform: translateX(-3px); } to { transform: translateX(3px); } }
+@keyframes wx-rain {
+  0% { transform: translate(3px, -6px); opacity: 0; }
+  25% { opacity: 1; }
+  100% { transform: translate(-4px, 9px); opacity: 0; }
+}
+@keyframes wx-snow {
+  0% { transform: translate(0, -8px); opacity: 0; }
+  20% { opacity: 1; }
+  50% { transform: translate(2px, -1px); }
+  100% { transform: translate(-1px, 8px); opacity: 0; }
+}
+@keyframes wx-flash {
+  0%, 7%, 11%, 16%, 100% { opacity: 1; }
+  9%, 13% { opacity: 0.15; }
+}
 .weather-condition { min-height: 2.1em; margin: 0; color: #fffbe5; font-size: clamp(10px, 3cqw, 30px); line-height: 1.05; }
 .weather-temperatures { display: flex; justify-content: space-around; gap: 12%; width: 100%; margin-top: auto; font-size: clamp(10px, 2.8cqw, 28px); line-height: 1; }
 .weather-temperatures strong { display: block; color: #fff; font-size: clamp(16px, 4.5cqw, 46px); font-weight: 400; }
@@ -587,15 +620,13 @@ body {
   39% { translate: -0.8px 0; }
 }
 
+/* Reduce Motion turns off the looping CRT effects only. The power-on and power-off
+   animations (picture opening from and collapsing to a line) always play. */
 @media (prefers-reduced-motion: reduce) {
   .screen,
   .screen::before,
-  .tv-picture,
-  .tv-bars,
   .tv-static,
-  .tv-loading,
-  .tv-loading::after,
-  #matrix-channel.is-powering-on { animation: none; }
+  .tv-loading::after { animation: none; }
   .crt-tracking { display: none; }
 }
 
