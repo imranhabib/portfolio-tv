@@ -630,12 +630,12 @@ body {
 }
 
 /* Reduce Motion turns off the looping CRT effects only. The power-on and power-off
-   animations (picture opening from and collapsing to a line) always play. */
+   animations (picture opening from and collapsing to a line, the loader's progress bars)
+   always play. */
 @media (prefers-reduced-motion: reduce) {
   .screen,
   .screen::before,
-  .tv-static,
-  .tv-loading::after { animation: none; }
+  .tv-static { animation: none; }
   .crt-tracking { display: none; }
 }
 
