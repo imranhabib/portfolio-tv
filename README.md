@@ -8,15 +8,25 @@ the screen. Use the channel buttons below the screen to change channels.
 
 | Channel | Content |
 |---|---|
-| 1 | Bouncing DVD logo with a typewriter bio |
-| 2 | Scrolling LinkedIn profile broadcast |
-| 3 | Live webcam feed |
+| 1 | Bouncing DVD logo with a typewriter bio. Click the screen to add a DVD logo, click a logo to remove it, and click the bio to add a LinkedIn or GitHub icon. |
+| 2 | LinkedIn profile that scrolls by itself. Scroll or drag to take over; auto-scroll starts again 2 seconds later. |
+| 3 | Banzai Pipeline live webcam from Port of Cams. It is view-only: clicks do not reach the player. |
 | 4 | Local weather forecast (based on the visitor's approximate location) |
-| 5 | Matrix-style terminal |
-| 6 | Playable Snake game |
+| 5 | Matrix-style terminal that greets the visitor by IP address |
+| 6 | Snake. Use the arrow keys, WASD or swipes to turn, and Space to pause. The best score is kept in the browser. |
 
-The weather channel gets the visitor's approximate location from `ipapi.co`. It gets the
-forecast from `api.weather.gov` and falls back to `open-meteo.com`.
+The site calls these external services from the visitor's browser:
+
+| Service | Used by | Purpose |
+|---|---|---|
+| `ipapi.co` | Weather | Approximate city and coordinates |
+| `api.weather.gov` | Weather | US forecast (first choice for US visitors) |
+| `open-meteo.com` | Weather | Forecast outside the US, and fallback |
+| `api.ipify.org` | Matrix | Visitor's IP address |
+| `portofcams.com` | Webcam | Live camera embed (loads only while channel 3 is on) |
+
+If a service fails, the channel still works: weather falls back to Seattle or shows
+"No signal", and Matrix uses "visitor" in place of the IP address.
 
 ## Tech
 
@@ -37,9 +47,15 @@ src/forecast.js   Location and forecast providers (NWS, Open-Meteo)
 src/matrix.js     Channel 5: Matrix terminal
 src/snake.js      Channel 6: Snake game
 src/style.css     TV cabinet, CRT effects and channel styles
-public/assets/    Static images
+public/           Favicon and static images
 scripts/          Node check scripts for channel, layout and game logic
+.github/CODEOWNERS Default code owner for the repo
 ```
+
+Each channel is an object with `enter()`, `leave()` and `update(time)`, plus an optional
+`element` that is shown only while the channel is on screen. To add a channel, create it
+in its own file and add it to the list in `src/main.js`. The list order sets the channel
+numbers.
 
 ## Run locally
 
@@ -59,6 +75,12 @@ Each check script is a standalone Node script. Run them all with:
 ```bash
 npm test
 ```
+
+## Contributing
+
+`main` is protected by a ruleset. Make changes on a branch and open a pull request.
+A pull request needs one approval from a code owner (see `.github/CODEOWNERS`) before it
+can be merged. Run `npm test` and `npm run build` before you open it.
 
 ## Deploy
 
