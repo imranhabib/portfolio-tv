@@ -71,8 +71,13 @@
         <iframe data-src="https://portofcams.com/embed/banzai-pipeline/" title="Banzai Pipeline, Hawaii live webcam" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>
         <p class="webcam-credit"><a href="https://portofcams.com/cameras/banzai-pipeline/" target="_blank" rel="noopener noreferrer">Banzai Pipeline live camera</a> via <a href="https://portofcams.com/" target="_blank" rel="noopener noreferrer">Port of Cams</a></p>
       </section>
-      <section id="iss-channel" hidden aria-label="International Space Station live view">
-        <iframe data-src="https://www.youtube-nocookie.com/embed/ROboUHfPUrU?autoplay=1&amp;mute=1&amp;controls=0&amp;playsinline=1&amp;rel=0" title="Live view of Earth from the International Space Station" allow="autoplay; encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+      <section id="iss-channel" class="is-tuning" hidden aria-label="International Space Station live view">
+        <div class="youtube-player" data-video-id="ROboUHfPUrU"></div>
+        <div class="youtube-tuning">
+          <div class="tv-static" aria-hidden="true"></div>
+          <p class="youtube-status" role="status">TUNING…</p>
+          <button class="youtube-tune" type="button" hidden>TAP TO TUNE</button>
+        </div>
         <span class="webcam-live" aria-hidden="true">LIVE</span>
         <p class="webcam-credit"><a href="https://www.youtube.com/@NASA/live" target="_blank" rel="noopener noreferrer">International Space Station live view</a> via <a href="https://www.nasa.gov/live/" target="_blank" rel="noopener noreferrer">NASA</a></p>
       </section>

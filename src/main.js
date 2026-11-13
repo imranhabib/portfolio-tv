@@ -4,6 +4,7 @@ import { createPower } from './power.js';
 import { createDvdChannel } from './dvd.js';
 import { createExperienceChannel } from './experience.js';
 import { createWebcamChannel } from './webcam.js';
+import { createYouTubeChannel } from './youtube.js';
 import { createMatrixChannel } from './matrix.js';
 import { createWeatherBroadcast } from './weather.js';
 import { createSnakeChannel } from './snake.js';
@@ -17,7 +18,7 @@ const tuner = createTuner(screen, document.querySelector('#channel-display'), [
   createWebcamChannel(document.querySelector('#webcam-channel')),
   matrix,
   createWeatherBroadcast(document.querySelector('#weather-channel')),
-  createWebcamChannel(document.querySelector('#iss-channel')),
+  createYouTubeChannel(document.querySelector('#iss-channel')),
   createSnakeChannel(document.querySelector('#snake-channel')),
 ]);
 

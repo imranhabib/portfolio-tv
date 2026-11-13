@@ -16,7 +16,7 @@ while the TV is off. Press POWER again to return to the last channel.
 | 3 | Banzai Pipeline live webcam from Port of Cams. It is view-only: clicks do not reach the player. |
 | 4 | Matrix-style terminal that greets the visitor by IP address |
 | 5 | Local weather forecast (based on the visitor's approximate location) |
-| 6 | Live view of Earth from the International Space Station, from NASA's official YouTube stream. View-only, like channel 3. |
+| 6 | Live view of Earth from the International Space Station, from NASA's official YouTube stream. View-only, like channel 3. CRT static covers the player until the stream is playing, so YouTube's title bar and play button never show. |
 | 7 | Snake. Use the arrow keys, WASD or swipes to turn, and Space to pause. The best score is kept in the browser. |
 
 The site calls these external services from the visitor's browser:
@@ -28,10 +28,11 @@ The site calls these external services from the visitor's browser:
 | `open-meteo.com` | Weather | Forecast outside the US, and fallback |
 | `api.ipify.org` | Matrix | Visitor's IP address |
 | `portofcams.com` | Webcam | Live camera embed (loads only while channel 3 is on) |
+| `youtube.com/iframe_api` | ISS | YouTube's IFrame Player API (no key), loaded the first time channel 6 is on |
 | `youtube-nocookie.com` | ISS | NASA's live ISS stream (loads only while channel 6 is on) |
 
 If a service fails, the channel still works: weather falls back to Seattle or shows
-"No signal", and Matrix uses "visitor" in place of the IP address.
+"No signal", Matrix uses "visitor" in place of the IP address, and the ISS channel shows "NO SIGNAL".
 
 ## Tech
 
@@ -47,7 +48,8 @@ src/dvd.js        Channel 1: bouncing DVD logos and profile icons
 src/bio.js        Typewriter bio text and its mobile corner layout
 src/physics.js    Movement and collisions for the bouncing icons (no DOM)
 src/experience.js Channel 2: auto-scrolling LinkedIn profile
-src/webcam.js     Channels 3 and 6: live cameras (waves and ISS)
+src/webcam.js     Channel 3: live waves webcam
+src/youtube.js    Channel 6: ISS live stream behind a tuning screen
 src/weather.js    Channel 5: weather broadcast (rendering)
 src/forecast.js   Location and forecast providers (NWS, Open-Meteo)
 src/matrix.js     Channel 4: Matrix terminal
