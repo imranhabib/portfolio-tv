@@ -107,6 +107,14 @@ export function createBio(element, frame, mobileScreen) {
       const origin = frame.getBoundingClientRect();
       return { x: letter.left - origin.left + letter.width / 2, y: letter.top - origin.top + letter.height / 2 };
     },
+    // Clear the text and its colour, so typing starts again from the first letter.
+    restart() {
+      typed = 0;
+      startedAt = undefined;
+      words.forEach((word) => { word.textContent = ''; });
+      element.style.color = '';
+      relayout();
+    },
     // Continue typing from where it stopped (after time spent on another channel).
     resume(now) {
       startedAt = now - typed * msPerLetter;

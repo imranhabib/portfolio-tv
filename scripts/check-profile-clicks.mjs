@@ -12,6 +12,7 @@ function fakeElement(className, size = { width: 190, height: 78 }) {
     removeAttribute(name) { delete this.attributes[name]; },
     cloneNode() { return element(this.className); },
     remove() { this.removed = true; },
+    appendChild() {},
     closest(selector) { return selector === `.${this.className.split(' ').at(-1)}` ? this : null; },
   };
 }
@@ -33,14 +34,14 @@ try {
     createElement: () => element('', { width: 54, height: 54 }),
   };
   const firstLogo = element('dvd-logo');
-  const bio = { querySelectorAll: () => [], getBoundingClientRect: () => ({ top: 250, bottom: 300 }) };
+  const bio = { style: {}, querySelectorAll: () => [], getBoundingClientRect: () => ({ top: 250, bottom: 300 }) };
   const handlers = {};
   const added = [];
   const screen = {
     clientWidth: 800,
     querySelector: (selector) => ({ '.dvd-logo': firstLogo, '#bio': bio, '.linkedin-logo.is-template': { innerHTML: '<svg></svg>' } })[selector],
     addEventListener: (type, fn) => { handlers[type] = fn; },
-    appendChild: (node) => added.push(node),
+    appendChild: (node) => { node.removed = false; added.push(node); },
     getBoundingClientRect: () => ({ left: 0, top: 0, width: 800, height: 600 }),
   };
   const dvd = createDvdChannel(screen);
@@ -84,10 +85,49 @@ try {
   assert.equal(opened.length, openedBefore, 'Clicks do nothing while the DVD channel is off screen');
   assert.equal(spawnedLogos().length, 1);
   dvd.enter();
+  assert.equal(spawnedLogos().length, 2, 'Returning to the channel adds a DVD logo');
   handlers.click({ target: background, clientX: 200, clientY: 200 });
   assert.equal(opened.length, openedBefore, 'Leaving the channel forgets a pending profile press');
-  assert.equal(spawnedLogos().length, 2);
-  console.log('Passed: moving-target and direct profile clicks open correct links without spawning DVDs; DVD add/remove, Bio click, and off-screen clicks.');
+  assert.equal(spawnedLogos().length, 3);
+
+  // No timer: staying on the channel adds nothing; only a return does.
+  const count = () => spawnedLogos().length;
+  const before = count();
+  dvd.update(1000);
+  dvd.update(60000);
+  assert.equal(count(), before, 'Time on the channel adds no DVD logos');
+  dvd.leave();
+  dvd.enter();
+  assert.equal(count(), before + 1, 'One DVD logo on each return');
+
+  // Hard limit: at most 20 DVD logos on screen, from clicks or automatically.
+  const onScreen = () => 1 + spawnedLogos().filter((node) => !node.removed).length;
+  for (let i = 0; i < 30; i++) handlers.click({ target: background, clientX: 200, clientY: 200 });
+  assert.equal(onScreen(), 20, 'Clicks stop adding DVD logos at 20');
+  dvd.leave();
+  dvd.enter();
+  assert.equal(onScreen(), 20, 'Returning adds none at the limit');
+  const last = spawnedLogos().filter((node) => !node.removed).at(-1);
+  handlers.pointerdown({ target: last });
+  handlers.click({ target: last });
+  assert.equal(onScreen(), 19, 'Removing one makes room');
+  handlers.click({ target: background, clientX: 200, clientY: 200 });
+  assert.equal(onScreen(), 20, 'Clicks can add again below the limit');
+  assert.equal(spawnedIcons().length, 1, 'Profile icons are not affected');
+  // Turning the TV off resets the channel: only the original logo, bio typing from the start.
+  bio.style.color = '#bd4cff';
+  dvd.leave();
+  dvd.reset();
+  const live = () => new Set([firstLogo, ...added].filter((node) => !node.removed && node.className.includes('logo')));
+  assert.deepEqual([...live()], [firstLogo], 'Reset leaves only the original DVD logo (no extra logos or profile icons)');
+  assert.equal(firstLogo.style.transform, 'translate3d(0px, 0px, 0)', 'The original logo goes back to its start position');
+  assert.equal(bio.style.color, '', 'The bio colour is cleared so it types again in its own colour');
+  dvd.enter();
+  assert.deepEqual([...live()], [firstLogo], 'The first showing after a reset is not a return: still one logo');
+  dvd.leave();
+  dvd.enter();
+  assert.equal(live().size, 2, 'Later returns add a logo again');
+  console.log('Passed: reset after power off; moving-target and direct profile clicks open correct links without spawning DVDs; DVD add/remove, Bio click, off-screen clicks; one DVD on each return to the channel; 20-logo limit.');
 } finally {
   globalThis.window = originals.window;
   globalThis.document = originals.document;
